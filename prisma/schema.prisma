@@ -1,5 +1,3 @@
-// npx prisma studio
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,14 +8,13 @@ datasource db {
 }
 
 model Poll {
-  id        String       @id @default(uuid())
+  id        String   @id @default(uuid())
   title     String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
-
-  options   PollOption[]
-  votes     Vote[]
+  options PollOption[]
+  votes   Vote[]
 }
 
 model PollOption {
@@ -25,21 +22,19 @@ model PollOption {
   title  String
   pollId String
 
-
-  poll   Poll   @relation(fields: [pollId], references: [id])
-  votes  Vote[]
+  poll  Poll   @relation(fields: [pollId], references: [id])
+  votes Vote[]
 }
 
 model Vote {
-  id           Int        @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   sessionId    String
   pollId       String
   pollOptionId String
-  createdAt    DateTime   @default(now())
+  createdAt    DateTime @default(now())
 
+  pollOption PollOption @relation(fields: [pollOptionId], references: [id])
+  poll       Poll       @relation(fields: [pollId], references: [id])
 
-  pollOption   PollOption @relation(fields: [pollOptionId], references: [id])
-  poll         Poll       @relation(fields: [pollId], references: [id])
-
-  @@unique([sessionId, pollId]) // para o usuário não votar mais de uma vez
+  @@unique([sessionId, pollId])
 }
